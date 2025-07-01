@@ -196,7 +196,10 @@ To avoid charges, delete these:
 
 > ## 📸 App Screenshot
 
-![ClimaEngineX UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1)
+## 📸 Live Preview of ClimaEngineX
+
+![ClimaEngineX Web UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1)
+
 
 
 ---
