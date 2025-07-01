@@ -194,7 +194,10 @@ To avoid charges, delete these:
 
 ## 📸 Screenshots
 
-> Add screenshots of your frontend and AWS console here for demo purposes.
+> ## 📸 App Screenshot
+
+![ClimaEngineX UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1)
+
 
 ---
 
