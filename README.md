@@ -198,7 +198,7 @@ To avoid charges, delete these:
 
 ## 📸 Live Preview of ClimaEngineX
 
-![ClimaEngineX Web UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1)
+![ClimaEngineX Web UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1.png)
 
 
 
