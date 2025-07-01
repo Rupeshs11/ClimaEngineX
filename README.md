@@ -1,9 +1,12 @@
 # 🌦️ KnoxWeather — Flask + AWS Weather App
 
 > Real-time weather. Minimal design. Powered by Flask, AWS, and OpenWeatherMap.
-![Python](https://img.shields.io/badge/Python-3.9-blue)
-![Flask](https://img.shields.io/badge/Flask-2.0-lightgrey)
-![AWS](https://img.shields.io/badge/AWS-EC2-orange)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) |
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white) |
+![AWS](https://img.shields.io/badge/AWS_EC2-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white) |
+![S3](https://img.shields.io/badge/AWS_S3-569A31?style=for-the-badge&logo=amazonaws&logoColor=white) |
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white) |
+![OpenWeather](https://img.shields.io/badge/OpenWeather-FF6C00?style=for-the-badge&logo=openweathermap&logoColor=white) |
 
 
 KnoxWeather is a simple weather web application built using Flask for backend, HTML/CSS/Bootstrap for frontend, and OpenWeatherMap API for live weather data. It is hosted on AWS EC2 (Amazon Linux 2023) with an optional AWS S3 bucket configured for future media/static storage. This project includes all major AWS setup steps and secure deployment using SSH and environment variables.
