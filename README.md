@@ -1,4 +1,4 @@
-# 🌦️ KnoxWeather — Containerized Weather App with CI/CD
+# 🌦️ ClimaX — Containerized Weather App with CI/CD
 
 > Real-time weather. Dockerized deployment. Fully automated CI/CD pipeline to AWS.
 
