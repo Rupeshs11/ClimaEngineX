@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App - Beautiful Weather Forecast</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <!-- Dynamic Background -->
     <div id="background-container" class="background-container"></div>
-    
+
     <!-- Main Container -->
     <div class="container-fluid h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-lg-8 col-xl-6">
-                
+
                 <!-- Header -->
                 <div class="text-center mb-4 fade-in">
                     <h1 class="app-title">
                         <i class="fas fa-cloud-sun weather-icon-header"></i>
-                        Weather App
+                        ClimaEngineX
                     </h1>
                     <p class="app-subtitle">Beautiful weather forecasts at your fingertips</p>
                 </div>
-                
+
                 <!-- Search Section -->
                 <div class="search-container glass-card mb-4 fade-in">
                     <div class="input-group">
                         <span class="input-group-text search-icon">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" 
-                               id="cityInput" 
-                               class="form-control search-input" 
-                               placeholder="Enter city name (e.g., London, Tokyo, New York)"
-                               autocomplete="off">
+                        <input type="text" id="cityInput" class="form-control search-input"
+                            placeholder="Enter city name (e.g., London, Tokyo, New York)" autocomplete="off">
                         <button class="btn search-btn" type="button" id="searchBtn">
                             <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Loading Animation -->
                 <div id="loadingSection" class="loading-section d-none">
                     <div class="loading-spinner">
@@ -61,7 +61,7 @@
                         <p class="loading-text mt-3">Fetching weather data...</p>
                     </div>
                 </div>
-                
+
                 <!-- Weather Display -->
                 <div id="weatherSection" class="weather-section d-none">
                     <!-- Main Weather Card -->
@@ -76,7 +76,7 @@
                                     <p id="countryName" class="country-name"></p>
                                     <p id="timestamp" class="timestamp"></p>
                                 </div>
-                                
+
                                 <div class="temperature-display">
                                     <span id="temperature" class="temperature">--°</span>
                                     <div class="temperature-details">
@@ -85,7 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6 text-center">
                                 <div class="weather-icon-container">
                                     <img id="weatherIcon" src="" alt="Weather Icon" class="weather-icon-main">
@@ -93,7 +93,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Weather Details Grid -->
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -107,7 +107,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="weather-detail-card glass-card slide-up">
                                 <div class="detail-header">
@@ -120,7 +120,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="weather-detail-card glass-card slide-up">
                                 <div class="detail-header">
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="weather-detail-card glass-card slide-up">
                                 <div class="detail-header">
@@ -144,7 +144,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="weather-detail-card glass-card slide-up">
                                 <div class="detail-header">
@@ -156,7 +156,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="weather-detail-card glass-card slide-up">
                                 <div class="detail-header">
@@ -170,7 +170,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Error Message -->
                 <div id="errorSection" class="error-section d-none">
                     <div class="alert alert-danger glass-card" role="alert">
@@ -178,11 +178,11 @@
                         <span id="errorMessage">Something went wrong</span>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
-    
+
     <!-- Footer -->
     <footer class="footer mt-auto">
         <div class="container-fluid">
@@ -196,10 +196,10 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JavaScript -->
     <script>
         class WeatherApp {
@@ -208,7 +208,7 @@
                 this.bindEvents();
                 this.loadDefaultCity();
             }
-            
+
             initializeElements() {
                 this.cityInput = document.getElementById('cityInput');
                 this.searchBtn = document.getElementById('searchBtn');
@@ -217,7 +217,7 @@
                 this.errorSection = document.getElementById('errorSection');
                 this.backgroundContainer = document.getElementById('background-container');
             }
-            
+
             bindEvents() {
                 this.searchBtn.addEventListener('click', () => this.searchWeather());
                 this.cityInput.addEventListener('keypress', (e) => {
@@ -230,11 +230,11 @@
                     this.cityInput.parentElement.classList.remove('focused');
                 });
             }
-            
+
             async loadDefaultCity() {
                 await this.getWeather('London');
             }
-            
+
             async searchWeather() {
                 const city = this.cityInput.value.trim();
                 if (!city) {
@@ -243,10 +243,10 @@
                 }
                 await this.getWeather(city);
             }
-            
+
             async getWeather(city) {
                 this.showLoading();
-                
+
                 try {
                     const response = await fetch('/weather', {
                         method: 'POST',
@@ -255,9 +255,9 @@
                         },
                         body: JSON.stringify({ city: city })
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (data.success) {
                         this.displayWeather(data.data);
                         this.updateBackground(data.data.weather_main);
@@ -268,7 +268,7 @@
                     this.showError('Network error - please try again');
                 }
             }
-            
+
             displayWeather(data) {
                 // Update main weather info
                 document.getElementById('cityText').textContent = data.city;
@@ -277,12 +277,12 @@
                 document.getElementById('description').textContent = data.description;
                 document.getElementById('feelsLike').textContent = `${data.feels_like}°C`;
                 document.getElementById('timestamp').textContent = `Last updated: ${data.timestamp}`;
-                
+
                 // Update weather icon
                 const weatherIcon = document.getElementById('weatherIcon');
                 weatherIcon.src = `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
                 weatherIcon.alt = data.description;
-                
+
                 // Update weather details
                 document.getElementById('humidity').textContent = `${data.humidity}%`;
                 document.getElementById('windSpeed').textContent = `${data.wind_speed} km/h`;
@@ -291,10 +291,10 @@
                 document.getElementById('visibility').textContent = `${data.visibility} km`;
                 document.getElementById('sunrise').textContent = data.sunrise;
                 document.getElementById('sunset').textContent = data.sunset;
-                
+
                 this.showWeather();
             }
-            
+
             updateBackground(weatherCondition) {
                 const condition = weatherCondition.toLowerCase();  // convert to lowercase
                 const backgrounds = {
@@ -308,26 +308,26 @@
                     'fog': 'linear-gradient(135deg, #b2bec3 0%, #636e72 100%)',
                     'haze': 'linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)'
                 };
-            
+
                 const background = backgrounds[condition] || backgrounds['clear'];
                 this.backgroundContainer.style.background = background;
-            
+
                 this.addWeatherParticles(condition);
             }
-            
-            
+
+
             addWeatherParticles(weatherCondition) {
                 // Clear existing particles
                 const existingParticles = document.querySelectorAll('.weather-particle');
                 existingParticles.forEach(particle => particle.remove());
-                
+
                 if (weatherCondition === 'rain' || weatherCondition === 'drizzle') {
                     this.createRainEffect();
                 } else if (weatherCondition === 'snow') {
                     this.createSnowEffect();
                 }
             }
-            
+
             createRainEffect() {
                 for (let i = 0; i < 50; i++) {
                     const drop = document.createElement('div');
@@ -338,7 +338,7 @@
                     this.backgroundContainer.appendChild(drop);
                 }
             }
-            
+
             createSnowEffect() {
                 for (let i = 0; i < 30; i++) {
                     const flake = document.createElement('div');
@@ -350,18 +350,18 @@
                     this.backgroundContainer.appendChild(flake);
                 }
             }
-            
+
             showLoading() {
                 this.weatherSection.classList.add('d-none');
                 this.errorSection.classList.add('d-none');
                 this.loadingSection.classList.remove('d-none');
             }
-            
+
             showWeather() {
                 this.loadingSection.classList.add('d-none');
                 this.errorSection.classList.add('d-none');
                 this.weatherSection.classList.remove('d-none');
-                
+
                 // Trigger animations
                 setTimeout(() => {
                     const cards = document.querySelectorAll('.slide-up');
@@ -372,7 +372,7 @@
                     });
                 }, 100);
             }
-            
+
             showError(message) {
                 this.loadingSection.classList.add('d-none');
                 this.weatherSection.classList.add('d-none');
@@ -380,11 +380,12 @@
                 this.errorSection.classList.remove('d-none');
             }
         }
-        
+
         // Initialize the app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             new WeatherApp();
         });
     </script>
 </body>
+
 </html>
