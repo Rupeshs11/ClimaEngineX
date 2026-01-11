@@ -1,206 +1,275 @@
-# 🌦️ KnoxWeather — Flask + AWS Weather App
+# 🌦️ KnoxWeather — Containerized Weather App with CI/CD
 
-> Real-time weather. Minimal design. Powered by Flask, AWS, and OpenWeatherMap.
+> Real-time weather. Dockerized deployment. Fully automated CI/CD pipeline to AWS.
 
-## 🚀 Tech Stack
-
-<p align="left">
-  <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask" />
-  <img src="https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="EC2" />
-  <img src="https://img.shields.io/badge/Amazon_S3-569A31?style=for-the-badge&logo=amazonaws&logoColor=white" alt="S3" />
-  <img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap" />
-  <img src="https://img.shields.io/badge/OpenWeather-FF6C00?style=for-the-badge&logo=openweathermap&logoColor=white" alt="OpenWeather" />
+<!-- Modern 3D Badges -->
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12-FFD43B?style=plastic&logo=python&logoColor=blue" alt="Python" /></a>
+  <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-2.3-00D4AA?style=plastic&logo=flask&logoColor=white" alt="Flask" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-🐳-00BFFF?style=plastic&logo=docker&logoColor=white" alt="Docker" /></a>
+  <a href="https://gunicorn.org/"><img src="https://img.shields.io/badge/Gunicorn-WSGI-499848?style=plastic&logo=gunicorn&logoColor=white" alt="Gunicorn" /></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/CI%2FCD-GitHub_Actions-FF6F00?style=plastic&logo=githubactions&logoColor=white" alt="GitHub Actions" /></a>
+  <a href="https://hub.docker.com/"><img src="https://img.shields.io/badge/Registry-Docker_Hub-066DA5?style=plastic&logo=docker&logoColor=white" alt="Docker Hub" /></a>
+  <a href="https://aws.amazon.com/ec2/"><img src="https://img.shields.io/badge/Cloud-AWS_EC2-FF9900?style=plastic&logo=amazonec2&logoColor=white" alt="AWS EC2" /></a>
+  <a href="https://openweathermap.org/"><img src="https://img.shields.io/badge/API-OpenWeather-E96E50?style=plastic&logo=openweathermap&logoColor=white" alt="OpenWeather" /></a>
+</p>
 
-KnoxWeather is a simple weather web application built using Flask for backend, HTML/CSS/Bootstrap for frontend, and OpenWeatherMap API for live weather data. It is hosted on AWS EC2 (Amazon Linux 2023) with an optional AWS S3 bucket configured for future media/static storage. This project includes all major AWS setup steps and secure deployment using SSH and environment variables.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Production_Ready-00C853?style=plastic" alt="Status" />
+  <img src="https://img.shields.io/badge/License-MIT-A31F34?style=plastic" alt="License" />
+  <img src="https://img.shields.io/badge/PRs-Welcome-FF69B4?style=plastic" alt="PRs Welcome" />
+</p>
 
 ---
 
-## 📁 Folder Structure
+## ✨ What's New
+
+| Feature | Description |
+|---------|-------------|
+| 🐳 **Dockerized** | Fully containerized with multi-stage builds |
+| 🔄 **CI/CD Pipeline** | Automated build, push & deploy via GitHub Actions |
+| 🚀 **One-Click Deploy** | Push to `main` → Auto deploys to EC2 |
+| 🔐 **Secure Secrets** | Environment variables via GitHub Secrets |
+| ⚡ **Production Ready** | Gunicorn WSGI server |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────┐      ┌──────────────┐      ┌─────────────┐      ┌─────────────┐
+│   GitHub    │ ───▶ │   GitHub     │ ───▶ │  Docker Hub │ ───▶ │   AWS EC2   │
+│   (Push)    │      │   Actions    │      │   (Image)   │      │ (Container) │
+└─────────────┘      └──────────────┘      └─────────────┘      └─────────────┘
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 KnoxWeather/
-├── app.py              # Flask application logic
-├── templates/          # HTML files
-├── static/             # CSS and JS
-├── .env                # API key stored securely
-├── requirements.txt    # Python dependencies
-└── README.md           # Project documentation
+├── 📄 app.py                    # Flask application
+├── 📄 Dockerfile                # Container configuration
+├── 📄 .dockerignore             # Docker build exclusions
+├── 📄 requirements.txt          # Python dependencies
+├── 📁 templates/
+│   └── index.html               # Weather UI template
+├── 📁 static/
+│   └── style.css                # Custom styles
+├── 📁 .github/workflows/
+│   └── deploy.yml               # CI/CD pipeline
+├── 📄 .env                      # Local environment (not in repo)
+└── 📄 README.md                 # You're here!
 ```
+
+---
+
+## � Quick Start
+
+### Option 1: Run with Docker (Recommended)
+
+```bash
+# Pull from Docker Hub
+docker pull yourusername/knoxweather:latest
+
+# Run the container
+docker run -d -p 80:5000 -e OPENWEATHER_API_KEY=your_api_key yourusername/knoxweather:latest
+
+# Open http://localhost
+```
+
+### Option 2: Run Locally
+
+```bash
+# Clone the repo
+git clone https://github.com/Rupeshs11/KnoxWeather.git
+cd KnoxWeather
+
+# Create .env file
+echo "OPENWEATHER_API_KEY=your_api_key" > .env
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+python app.py
+
+# Open http://localhost:5000
+```
+
+---
+
+## 🐳 Docker
+
+### Build Locally
+
+```bash
+docker build -t knoxweather .
+docker run -p 5000:5000 -e OPENWEATHER_API_KEY=your_key knoxweather
+```
+
+### Dockerfile Overview
+
+```dockerfile
+FROM python:3.12-slim      # Lightweight Python image
+WORKDIR /app               # Set working directory
+COPY requirements.txt .    # Copy dependencies
+RUN pip install ...        # Install dependencies
+COPY . .                   # Copy app code
+EXPOSE 5000                # Expose Flask port
+CMD ["gunicorn", ...]      # Production server
+```
+
+---
+
+## 🔄 CI/CD Pipeline
+
+The project includes a fully automated CI/CD pipeline using GitHub Actions.
+
+### Pipeline Flow
+
+```
+Push to main
+     │
+     ▼
+┌─────────────────────────────────┐
+│  📦 Build & Push to Docker Hub  │
+│  ─────────────────────────────  │
+│  • Checkout code                │
+│  • Login to Docker Hub          │
+│  • Build Docker image           │
+│  • Push with :latest tag        │
+└──────────────┬──────────────────┘
+               │
+               ▼
+┌─────────────────────────────────┐
+│  🚀 Deploy to AWS EC2           │
+│  ─────────────────────────────  │
+│  • SSH into EC2                 │
+│  • Pull latest image            │
+│  • Stop old container           │
+│  • Run new container            │
+│  • Cleanup old images           │
+└─────────────────────────────────┘
+```
+
+### Required GitHub Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `DOCKERHUB_USERNAME` | Your Docker Hub username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token |
+| `EC2_HOST` | EC2 public IP address |
+| `EC2_USERNAME` | `ec2-user` or `ubuntu` |
+| `EC2_SSH_KEY` | Contents of your `.pem` file |
+| `OPENWEATHER_API_KEY` | OpenWeatherMap API key |
+
+---
+
+## ☁️ AWS EC2 Setup
+
+### Prerequisites
+
+1. **Launch EC2 Instance**
+   - AMI: Amazon Linux 2023 or Ubuntu 22.04
+   - Instance Type: `t2.micro` (free tier)
+   - Create/use a key pair (`.pem` file)
+
+2. **Security Group Rules**
+
+   | Type | Port | Source |
+   |------|------|--------|
+   | SSH | 22 | Your IP |
+   | HTTP | 80 | 0.0.0.0/0 |
+
+3. **Install Docker on EC2**
+
+   ```bash
+   # SSH into EC2
+   ssh -i your-key.pem ec2-user@your-ec2-ip
+
+   # Install Docker
+   sudo yum update -y
+   sudo yum install docker -y
+   sudo systemctl start docker
+   sudo systemctl enable docker
+   sudo usermod -aG docker ec2-user
+
+   # Logout and login again
+   exit
+   ```
 
 ---
 
 ## 🔧 Features
 
-- Real-time weather data using OpenWeatherMap API 🌍
-- Beautiful and responsive frontend using Bootstrap 🎨
-- Hosted on AWS EC2 (Amazon Linux 2023) ☁️
-- API key stored securely in `.env` file 🔐
-- S3 bucket created and ready for future storage needs 🗂️
+| Feature | Description |
+|---------|-------------|
+| 🌡️ **Real-time Weather** | Live data from OpenWeatherMap API |
+| 🏙️ **City Search** | Search weather for any city worldwide |
+| 🌅 **Sunrise/Sunset** | Display sunrise and sunset times |
+| 💨 **Wind Info** | Wind speed and direction |
+| 💧 **Humidity** | Current humidity levels |
+| 📱 **Responsive** | Works on all devices |
+| ❤️ **Health Check** | `/health` endpoint for monitoring |
 
 ---
 
-## 🚀 How to Deploy (Step-by-Step)
+## �️ API Endpoints
 
-### ✅ 1. Clone the Repository on Local Machine
-
-```bash
-git clone https://github.com/Rupeshs11/KnoxWeather.git
-cd KnoxWeather
-```
-
-### ✅ 2. Create `.env` File
-
-Inside the project root folder, create `.env`:
-
-```env
-API_KEY=your_openweathermap_api_key
-```
-
-### ✅ 3. Install Python Requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-### ✅ 4. Launch AWS EC2 Instance (Amazon Linux 2023)
-
-Follow these detailed steps to launch your EC2 instance and prepare it for deployment:
-
-1. **Login to AWS Console**
-   - Visit: https://aws.amazon.com/console/
-   - Navigate to the **EC2** dashboard.
-
-2. **Create a VPC (Virtual Private Cloud)**
-   - Go to **VPC** → **Create VPC**
-   - Choose: "VPC Only"
-   - Name: `your-vpc-name`
-   - IPv4 CIDR: `10.0.0.0/16`
-   - Click **Create VPC**
-
-3. **Create a Subnet**
-   - Go to **Subnets** → **Create subnet**
-   - Name: `your-subnet-name`
-   - VPC: `your-vpc-name`
-   - AZ: Select default (e.g., `ap-south-1a`)
-   - IPv4 CIDR block: `10.0.1.0/24`
-   - Create
-
-4. **Create and Attach Internet Gateway**
-   - Go to **Internet Gateways** → **Create**
-   - Name: `your-igw-name`
-   - Attach to: `your-vpc-name`
-
-5. **Create a Route Table**
-   - Go to **Route Tables** → **Create**
-   - Name: `your-route-table`
-   - VPC: `your-vpc-name`
-   - After creation, go to **Routes** → **Edit routes** → **Add route**
-     - Destination: `0.0.0.0/0`
-     - Target: Select your **Internet Gateway**
-   - Go to **Subnet Associations** → **Edit** → Add your subnet
-
-6. **Create a Security Group**
-   - Go to **Security Groups** → **Create**
-   - Name: `your-security-group`
-   - VPC: `your-vpc-name`
-   - Inbound Rules:
-     - **SSH**: TCP, Port `22`, Source `My IP`
-     - **Custom TCP**: Port `5000`, Source `0.0.0.0/0` (to allow Flask app)
-   - Outbound Rules: Default (All traffic allowed)
-
-7. **Launch EC2 Instance**
-   - Go to **EC2** → **Launch Instance**
-   - Name: `your-ec2-name`
-   - AMI: Amazon Linux 2023 (Free tier eligible)
-   - Instance Type: `t2.micro`
-   - Key Pair: Create new or use existing (`your-key.pem`)
-   - Network Settings:
-     - VPC: `your-vpc-name`
-     - Subnet: `your-subnet-name`
-     - Auto-assign Public IP: Enabled
-     - Security Group: `your-security-group`
-   - Click **Launch Instance**
-
-8. **Copy Your EC2 Public IPv4 Address**
-   - You'll use this address to SSH into your server and access your Flask app in the browser (e.g., `http://<your-ec2-ip>:5000`)
-
-✅ Your EC2 instance is now ready!
-
-
-### ✅ 5. SSH into EC2 from Git Bash / terminal
-
-```bash
-ssh -i "your-key.pem" ec2-user@your-ec2-public-ip
-```
-
-
-### ✅ 6. Install Python & Git on EC2
-
-```bash
-sudo yum update -y
-sudo yum install python3 git -y
-```
-
-### ✅ 7. Upload Project to EC2 (from local system)
-
-```bash
-scp -i "your-key.pem" -r app.py templates static .env requirements.txt ec2-user@your-ec2-public-ip:/home/ec2-user/
-```
-
-### ✅ 8. Run Flask App on EC2
-
-```bash
-cd ~
-pip3 install -r requirements.txt
-nohup python3 app.py &
-```
-
-> 🔁 Flask will run on `http://0.0.0.0:5000`. Access using:
-> `http://your-ec2-public-ip:5000`
-
-> ⚠️ Note: This is suitable for demo/testing. For production, consider using Gunicorn + Nginx for better scalability.
-
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Main weather UI |
+| `/weather` | POST | Get weather data (JSON) |
+| `/health` | GET | Health check endpoint |
+| `/test-api` | GET | Test API configuration |
 
 ---
 
-## 🗃️ S3 Bucket (Optional)
+## 📊 Environment Variables
 
-- Created during initial AWS setup with proper IAM policies
-- Used for storing static or media files in future
-- Can be used for storing:
-  - Weather icons or background images
-  - Uploaded media
-  - Static assets (if hosting frontend separately)
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENWEATHER_API_KEY` | OpenWeatherMap API key | ✅ Yes |
 
+Get your free API key at [OpenWeatherMap](https://openweathermap.org/api)
 
 ---
 
-## ❌ Teardown (Optional)
+## 🧹 Cleanup AWS Resources
 
-To avoid charges, delete these:
+To avoid unexpected charges, delete these resources:
 
-1. EC2 instance
-2. Associated VPC, Subnet, IGW, Route Table
-3. Security group
-4. S3 Bucket
+- [ ] EC2 Instance
+- [ ] Security Group
+- [ ] Key Pair (optional)
+- [ ] VPC (if custom created)
 
-> ⚠️ **Important:** Don't forget to delete your AWS resources to avoid unexpected charges.
-
+> ⚠️ **Important:** Always terminate unused AWS resources!
 
 ---
 
-## 📸 Screenshots
+## 🤝 Tech Stack
 
-> ## 📸 App Screenshot
+| Technology | Purpose |
+|------------|---------|
+| **Flask** | Web framework |
+| **Gunicorn** | WSGI server |
+| **Docker** | Containerization |
+| **GitHub Actions** | CI/CD automation |
+| **Docker Hub** | Container registry |
+| **AWS EC2** | Cloud hosting |
+| **OpenWeatherMap** | Weather API |
 
-## 📸 Live Preview of ClimaEngineX
+---
 
-![ClimaEngineX Web UI](https://github.com/Rupeshs11/ClimaEngineX/issues/1)
+## 📜 License
 
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -208,38 +277,16 @@ To avoid charges, delete these:
 
 - [Flask](https://flask.palletsprojects.com/)
 - [OpenWeatherMap API](https://openweathermap.org/)
+- [Docker](https://www.docker.com/)
+- [GitHub Actions](https://github.com/features/actions)
 - [AWS EC2](https://aws.amazon.com/ec2/)
-- [Bootstrap](https://getbootstrap.com/)
 
 ---
 
----
+<p align="center">
+  <b>�️ Crafted with ❤️ by Knox 🚀</b>
+</p>
 
-## 💻 Common EC2 Commands (Cheat Sheet)
-
-These commands help you manage the KnoxWeather Flask app on your AWS EC2 instance:
-
-```bash
-# 🔐 Connect to EC2 via SSH
-ssh -i "weather_APPKEY.pem" ec2-user@<EC2_PUBLIC_IPV4>
-
-# 📤 Upload all project files to EC2
-scp -i "weather_APPKEY.pem" -r * ec2-user@<EC2_PUBLIC_IPV4>:/home/ec2-user/
-
-# 🚀 Run Flask app in background (detached)
-nohup python3 app.py &
-
-# 📊 Check if port 5000 is in use
-sudo lsof -i :5000
-
-# ❌ Kill the process using port 5000 (replace <PID> with actual number)
-kill -9 <PID>
-
-# 📄 View Flask output logs
-cat nohup.out
-
-
----
-🛠️ Crafted for the clouds by **Knox** 🚀
-
-
+<p align="center">
+  <i>Push to main. Deploy to cloud. It's that simple.</i>
+</p>
