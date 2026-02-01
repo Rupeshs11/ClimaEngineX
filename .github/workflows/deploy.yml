@@ -49,7 +49,7 @@ jobs:
             docker run -d \
               --name knoxweather \
               --restart unless-stopped \
-              -p 443:5000 \
+              -p 80:5000 \
               -e OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }} \
               ${{ secrets.DOCKERHUB_USERNAME }}/knoxweather:latest
             
