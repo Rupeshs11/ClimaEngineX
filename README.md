@@ -1,8 +1,8 @@
-# 🌦️ ClimaX — Containerized Weather App with CI/CD
+# 🌦️ ClimaX — Containerized Weather App with Full CI/CD & IaC
 
-> Real-time weather. Dockerized deployment. Fully automated CI/CD pipeline to AWS.
+> Real-time weather. Dockerized. Terraform-provisioned. Fully automated CI/CD pipeline to AWS.
 
-<!-- Modern 3D Badges -->
+<!-- Badges -->
 <p align="center">
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12-FFD43B?style=plastic&logo=python&logoColor=blue" alt="Python" /></a>
   <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-2.3-00D4AA?style=plastic&logo=flask&logoColor=white" alt="Flask" /></a>
@@ -12,9 +12,9 @@
 
 <p align="center">
   <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/CI%2FCD-GitHub_Actions-FF6F00?style=plastic&logo=githubactions&logoColor=white" alt="GitHub Actions" /></a>
-  <a href="https://hub.docker.com/"><img src="https://img.shields.io/badge/Registry-Docker_Hub-066DA5?style=plastic&logo=docker&logoColor=white" alt="Docker Hub" /></a>
+  <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-844FBA?style=plastic&logo=terraform&logoColor=white" alt="Terraform" /></a>
   <a href="https://aws.amazon.com/ec2/"><img src="https://img.shields.io/badge/Cloud-AWS_EC2-FF9900?style=plastic&logo=amazonec2&logoColor=white" alt="AWS EC2" /></a>
-  <a href="https://openweathermap.org/"><img src="https://img.shields.io/badge/API-OpenWeather-E96E50?style=plastic&logo=openweathermap&logoColor=white" alt="OpenWeather" /></a>
+  <a href="https://aws.amazon.com/s3/"><img src="https://img.shields.io/badge/State-AWS_S3-569A31?style=plastic&logo=amazons3&logoColor=white" alt="AWS S3" /></a>
 </p>
 
 <p align="center">
@@ -25,25 +25,44 @@
 
 ---
 
-## ✨ What's New
+## ✨ Highlights
 
-| Feature | Description |
-|---------|-------------|
-| 🐳 **Dockerized** | Fully containerized with multi-stage builds |
-| 🔄 **CI/CD Pipeline** | Automated build, push & deploy via GitHub Actions |
-| 🚀 **One-Click Deploy** | Push to `main` → Auto deploys to EC2 |
-| 🔐 **Secure Secrets** | Environment variables via GitHub Secrets |
-| ⚡ **Production Ready** | Gunicorn WSGI server |
+| Feature                       | Description                                         |
+| ----------------------------- | --------------------------------------------------- |
+| 🐳 **Dockerized**             | Fully containerized with Gunicorn production server |
+| 🔄 **CI/CD Pipeline**         | 3-stage pipeline: Build → Provision → Deploy        |
+| 🏗️ **Infrastructure as Code** | Terraform provisions EC2, VPC, Security Groups      |
+| 📦 **Remote State**           | Terraform state stored in S3 for consistency        |
+| 🚀 **One-Click Deploy**       | Push to `main` → Auto deploys to AWS                |
+| � **One-Click Destroy**       | Manual workflow to tear down all infrastructure     |
+| 🔐 **Secure Secrets**         | All credentials via GitHub Secrets                  |
 
 ---
 
 ## 🏗️ Architecture
 
+<p align="center">
+  <img src="assets/architecture-climax.png" alt="ClimaX Architecture" width="100%"/>
+</p>
+
+### Flow
+
 ```
-┌─────────────┐      ┌──────────────┐      ┌─────────────┐      ┌─────────────┐
-│   GitHub    │ ───▶ │   GitHub     │ ───▶ │  Docker Hub │ ───▶ │   AWS EC2   │
-│   (Push)    │      │   Actions    │      │   (Image)   │      │ (Container) │
-└─────────────┘      └──────────────┘      └─────────────┘      └─────────────┘
+Developer pushes code to GitHub (main branch)
+  │
+  ├─► Job 1: Build & Push Docker image to Docker Hub
+  │
+  ├─► Job 2: Terraform provisions AWS infrastructure
+  │     ├── Creates Default VPC & Security Group (ports 22, 80, 8000)
+  │     ├── Launches EC2 instance (t3.micro, Amazon Linux)
+  │     ├── Installs Docker via user_data script
+  │     ├── Stores state in S3 bucket
+  │     └── Outputs EC2 public IP
+  │
+  └─► Job 3: Deploys Docker container to EC2 via SSH
+        ├── Pulls image from Docker Hub
+        ├── Runs container on port 80
+        └── Passes API key as env variable
 ```
 
 ---
@@ -51,242 +70,161 @@
 ## 📁 Project Structure
 
 ```
-KnoxWeather/
-├── 📄 app.py                    # Flask application
-├── 📄 Dockerfile                # Container configuration
-├── 📄 .dockerignore             # Docker build exclusions
-├── 📄 requirements.txt          # Python dependencies
-├── 📁 templates/
-│   └── index.html               # Weather UI template
-├── 📁 static/
-│   └── style.css                # Custom styles
-├── 📁 .github/workflows/
-│   └── deploy.yml               # CI/CD pipeline
-├── 📄 .env                      # Local environment (not in repo)
-└── 📄 README.md                 # You're here!
+ClimaX/
+├── app.py                         # Flask application
+├── Dockerfile                     # Container config
+├── .dockerignore                  # Docker exclusions
+├── requirements.txt               # Python dependencies
+├── templates/
+│   └── index.html                 # Weather UI
+├── static/
+│   └── style.css                  # Styles
+├── terraform/
+│   ├── ec2.tf                     # EC2, VPC, Security Group
+│   ├── variable.tf                # Input variables
+│   ├── output.tf                  # EC2 IP output
+│   ├── provider.tf                # AWS provider (ap-south-1)
+│   └── terraform.tf               # Backend config (S3)
+├── assets/
+│   └── architecture-climax.png    # Architecture diagram
+├── .github/workflows/
+│   ├── deploy.yml                 # Build + Terraform + Deploy
+│   └── destroy.yml                # Destroy infrastructure
+└── README.md
 ```
 
 ---
 
-## � Quick Start
+## 🚀 Quick Start
 
-### Option 1: Run with Docker (Recommended)
+### Run with Docker
 
 ```bash
-# Pull from Docker Hub
 docker pull yourusername/knoxweather:latest
-
-# Run the container
-docker run -d -p 80:5000 -e OPENWEATHER_API_KEY=your_api_key yourusername/knoxweather:latest
-
-# Open http://localhost
+docker run -d -p 80:5000 -e OPENWEATHER_API_KEY=your_key yourusername/knoxweather:latest
 ```
 
-### Option 2: Run Locally
+### Run Locally
 
 ```bash
-# Clone the repo
-git clone https://github.com/Rupeshs11/KnoxWeather.git
-cd KnoxWeather
-
-# Create .env file
-echo "OPENWEATHER_API_KEY=your_api_key" > .env
-
-# Install dependencies
+git clone https://github.com/Rupeshs11/ClimaEngineX.git
+cd ClimaEngineX
+echo "OPENWEATHER_API_KEY=your_key" > .env
 pip install -r requirements.txt
-
-# Run the app
 python app.py
-
-# Open http://localhost:5000
 ```
 
 ---
 
-## 🐳 Docker
+## � CI/CD Pipeline
 
-### Build Locally
+### `deploy.yml` — 3 Connected Jobs
 
-```bash
-docker build -t knoxweather .
-docker run -p 5000:5000 -e OPENWEATHER_API_KEY=your_key knoxweather
-```
+| Job              | What it does                               |
+| ---------------- | ------------------------------------------ |
+| **Build & Push** | Builds Docker image → Pushes to Docker Hub |
+| **Terraform**    | Provisions EC2, SG, VPC → Outputs EC2 IP   |
+| **Deploy**       | SSHs into EC2 → Runs Docker container      |
 
-### Dockerfile Overview
+### `destroy.yml` — Manual Trigger
 
-```dockerfile
-FROM python:3.12-slim      # Lightweight Python image
-WORKDIR /app               # Set working directory
-COPY requirements.txt .    # Copy dependencies
-RUN pip install ...        # Install dependencies
-COPY . .                   # Copy app code
-EXPOSE 5000                # Expose Flask port
-CMD ["gunicorn", ...]      # Production server
-```
-
----
-
-## 🔄 CI/CD Pipeline
-
-The project includes a fully automated CI/CD pipeline using GitHub Actions.
-
-### Pipeline Flow
-
-```
-Push to main
-     │
-     ▼
-┌─────────────────────────────────┐
-│  📦 Build & Push to Docker Hub  │
-│  ─────────────────────────────  │
-│  • Checkout code                │
-│  • Login to Docker Hub          │
-│  • Build Docker image           │
-│  • Push with :latest tag        │
-└──────────────┬──────────────────┘
-               │
-               ▼
-┌─────────────────────────────────┐
-│  🚀 Deploy to AWS EC2           │
-│  ─────────────────────────────  │
-│  • SSH into EC2                 │
-│  • Pull latest image            │
-│  • Stop old container           │
-│  • Run new container            │
-│  • Cleanup old images           │
-└─────────────────────────────────┘
-```
+Tears down all Terraform-managed infrastructure. Run from **Actions** tab → `Destroy Infrastructure` → **Run workflow**.
 
 ### Required GitHub Secrets
 
-| Secret | Description |
-|--------|-------------|
-| `DOCKERHUB_USERNAME` | Your Docker Hub username |
-| `DOCKERHUB_TOKEN` | Docker Hub access token |
-| `EC2_HOST` | EC2 public IP address |
-| `EC2_USERNAME` | `ec2-user` or `ubuntu` |
-| `EC2_SSH_KEY` | Contents of your `.pem` file |
-| `OPENWEATHER_API_KEY` | OpenWeatherMap API key |
+| Secret                  | Description                  |
+| ----------------------- | ---------------------------- |
+| `AWS_ACCESS_KEY_ID`     | IAM access key for Terraform |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key for Terraform |
+| `EC2_SSH_KEY`           | Private key (`.pem`) for SSH |
+| `DOCKERHUB_USERNAME`    | Docker Hub username          |
+| `DOCKERHUB_TOKEN`       | Docker Hub access token      |
+| `OPENWEATHER_API_KEY`   | OpenWeatherMap API key       |
 
 ---
 
-## ☁️ AWS EC2 Setup
+## 🏗️ Terraform (IaC)
 
-### Prerequisites
+### Resources Created
 
-1. **Launch EC2 Instance**
-   - AMI: Amazon Linux 2023 or Ubuntu 22.04
-   - Instance Type: `t2.micro` (free tier)
-   - Create/use a key pair (`.pem` file)
+| Resource           | Details                                      |
+| ------------------ | -------------------------------------------- |
+| **Default VPC**    | Uses existing default VPC                    |
+| **Security Group** | Ports 22 (SSH), 80 (HTTP), 8000              |
+| **EC2 Instance**   | t3.micro, Amazon Linux, Docker pre-installed |
+| **S3 Backend**     | Stores `terraform.tfstate` remotely          |
 
-2. **Security Group Rules**
+### Key Commands
 
-   | Type | Port | Source |
-   |------|------|--------|
-   | SSH | 22 | Your IP |
-   | HTTP | 80 | 0.0.0.0/0 |
-
-3. **Install Docker on EC2**
-
-   ```bash
-   # SSH into EC2
-   ssh -i your-key.pem ec2-user@your-ec2-ip
-
-   # Install Docker
-   sudo yum update -y
-   sudo yum install docker -y
-   sudo systemctl start docker
-   sudo systemctl enable docker
-   sudo usermod -aG docker ec2-user
-
-   # Logout and login again
-   exit
-   ```
+```bash
+cd terraform
+terraform init          # Initialize + connect to S3 backend
+terraform plan          # Preview changes
+terraform apply         # Create infrastructure
+terraform destroy       # Tear down everything
+```
 
 ---
 
-## 🔧 Features
+## 🔧 App Features
 
-| Feature | Description |
-|---------|-------------|
-| 🌡️ **Real-time Weather** | Live data from OpenWeatherMap API |
-| 🏙️ **City Search** | Search weather for any city worldwide |
-| 🌅 **Sunrise/Sunset** | Display sunrise and sunset times |
-| 💨 **Wind Info** | Wind speed and direction |
-| 💧 **Humidity** | Current humidity levels |
-| 📱 **Responsive** | Works on all devices |
-| ❤️ **Health Check** | `/health` endpoint for monitoring |
-
----
-
-## �️ API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Main weather UI |
-| `/weather` | POST | Get weather data (JSON) |
-| `/health` | GET | Health check endpoint |
-| `/test-api` | GET | Test API configuration |
+| Feature                    | Description                       |
+| -------------------------- | --------------------------------- |
+| 🌡️ **Real-time Weather**   | Live data from OpenWeatherMap API |
+| 🏙️ **City Search**         | Search any city worldwide         |
+| 🌅 **Sunrise/Sunset**      | Display sunrise and sunset times  |
+| 💨 **Wind Info**           | Speed and direction               |
+| 💧 **Humidity & Pressure** | Atmospheric data                  |
+| ❤️ **Health Check**        | `/health` endpoint for monitoring |
 
 ---
 
-## 📊 Environment Variables
+## 🛠️ API Endpoints
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `OPENWEATHER_API_KEY` | OpenWeatherMap API key | ✅ Yes |
-
-Get your free API key at [OpenWeatherMap](https://openweathermap.org/api)
-
----
-
-## 🧹 Cleanup AWS Resources
-
-To avoid unexpected charges, delete these resources:
-
-- [ ] EC2 Instance
-- [ ] Security Group
-- [ ] Key Pair (optional)
-- [ ] VPC (if custom created)
-
-> ⚠️ **Important:** Always terminate unused AWS resources!
+| Endpoint    | Method | Description             |
+| ----------- | ------ | ----------------------- |
+| `/`         | GET    | Weather UI              |
+| `/weather`  | POST   | Get weather data (JSON) |
+| `/health`   | GET    | Health check            |
+| `/test-api` | GET    | Test API config         |
 
 ---
 
 ## 🤝 Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Flask** | Web framework |
-| **Gunicorn** | WSGI server |
-| **Docker** | Containerization |
-| **GitHub Actions** | CI/CD automation |
-| **Docker Hub** | Container registry |
-| **AWS EC2** | Cloud hosting |
-| **OpenWeatherMap** | Weather API |
+| Technology         | Purpose                 |
+| ------------------ | ----------------------- |
+| **Flask**          | Web framework           |
+| **Gunicorn**       | WSGI server             |
+| **Docker**         | Containerization        |
+| **Terraform**      | Infrastructure as Code  |
+| **GitHub Actions** | CI/CD automation        |
+| **Docker Hub**     | Container registry      |
+| **AWS EC2**        | Cloud compute           |
+| **AWS S3**         | Terraform state storage |
+| **OpenWeatherMap** | Weather API             |
 
 ---
 
-## 📜 License
+## 🧹 Cleanup
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Option 1: Automated (Recommended)
+
+Go to **Actions** → `Destroy Infrastructure` → **Run workflow**
+
+### Option 2: Manual
+
+Delete from AWS Console:
+
+- EC2 Instance
+- Security Group
+- S3 Bucket (if no longer needed)
+
+> ⚠️ **Always terminate unused AWS resources to avoid charges!**
 
 ---
 
-## 🙌 Acknowledgements
-
-- [Flask](https://flask.palletsprojects.com/)
-- [OpenWeatherMap API](https://openweathermap.org/)
-- [Docker](https://www.docker.com/)
-- [GitHub Actions](https://github.com/features/actions)
-- [AWS EC2](https://aws.amazon.com/ec2/)
-
----
 
 <p align="center">
-  <b>�️ Crafted with ❤️ by Knox 🚀</b>
-</p>
-
-<p align="center">
-  <i>Push to main. Deploy to cloud. It's that simple.</i>
+  <i>Push to main. Terraform provisions. Docker deploys. It's that simple.</i>
 </p>
