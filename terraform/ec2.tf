@@ -4,8 +4,8 @@ resource "aws_default_vpc" "default" {
 
 }
 
-resource "aws_security_group" "my-sg" {
-    name = "terraform-sg"
+resource "aws_security_group" "climax-sg" {
+    name = "climax-sg"
     description = "this is just a demo"
     vpc_id = aws_default_vpc.default.id # interpolation
   
@@ -41,7 +41,7 @@ resource "aws_security_group" "my-sg" {
 
 resource "aws_instance" "my-ec2" {
   key_name               = "sage.pem"
-  vpc_security_group_ids = [aws_security_group.my-sg.id]
+  vpc_security_group_ids = [aws_security_group.climax-sg.id]
   instance_type = var.ec2_instance_type
   ami = var.ec2_ami_id # amazon-linux
   root_block_device {
