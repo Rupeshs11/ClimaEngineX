@@ -40,7 +40,7 @@ resource "aws_security_group" "climax-sg" {
 # ec2-instance
 
 resource "aws_instance" "my-ec2" {
-  key_name               = "sage.pem"
+  key_name               = "sage"
   vpc_security_group_ids = [aws_security_group.climax-sg.id]
   instance_type = var.ec2_instance_type
   ami = var.ec2_ami_id # amazon-linux
