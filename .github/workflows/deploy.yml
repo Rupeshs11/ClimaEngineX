@@ -41,9 +41,6 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Create SSH Public Key
-        run: echo "${{ secrets.EC2_PUBLIC_KEY }}" > terraform/sage.pem.pub
-
       - name: Terraform Init
         run: terraform init
         working-directory: terraform

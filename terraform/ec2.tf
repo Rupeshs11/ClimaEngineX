@@ -1,16 +1,9 @@
-# key pair login 
-
-resource "aws_key_pair" "knox-key" {
-  key_name = "sage.pem"
-  public_key = file("sage.pem.pub")
-
-}
-
 # vpc and SG
 
 resource "aws_default_vpc" "default" {
 
 }
+
 resource "aws_security_group" "my-sg" {
     name = "terraform-sg"
     description = "this is just a demo"
@@ -47,8 +40,8 @@ resource "aws_security_group" "my-sg" {
 # ec2-instance
 
 resource "aws_instance" "my-ec2" {
-  key_name =  aws_key_pair.knox-key.key_name
-  security_groups = [aws_security_group.my-sg.name]
+  key_name               = "sage.pem"
+  vpc_security_group_ids = [aws_security_group.my-sg.id]
   instance_type = var.ec2_instance_type
   ami = var.ec2_ami_id # amazon-linux
   root_block_device {
