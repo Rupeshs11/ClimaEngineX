@@ -3,3 +3,13 @@ __pycache__/
 *.pyc
 nohup.out
 runner.py
+
+# SSH Keys
+*.pem
+*.pem.pub
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
