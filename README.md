@@ -1,6 +1,6 @@
-# 🌦️ ClimaX — Containerized Weather App with Full CI/CD & IaC
+# 🌦️ ClimaEngineX — Weather App with GitOps CI/CD on AWS EKS
 
-> Real-time weather. Dockerized. Terraform-provisioned. Fully automated CI/CD pipeline to AWS.
+> Real-time weather app with a production-grade Jenkins CI/CD pipeline deploying to Kubernetes via ArgoCD GitOps.
 
 <!-- Badges -->
 <p align="center">
@@ -11,87 +11,168 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/CI%2FCD-GitHub_Actions-FF6F00?style=plastic&logo=githubactions&logoColor=white" alt="GitHub Actions" /></a>
+  <a href="https://www.jenkins.io/"><img src="https://img.shields.io/badge/CI-Jenkins-D24939?style=plastic&logo=jenkins&logoColor=white" alt="Jenkins" /></a>
+  <a href="https://argoproj.github.io/cd/"><img src="https://img.shields.io/badge/CD-ArgoCD-EF7B4D?style=plastic&logo=argo&logoColor=white" alt="ArgoCD" /></a>
+  <a href="https://kubernetes.io/"><img src="https://img.shields.io/badge/K8s-EKS-326CE5?style=plastic&logo=kubernetes&logoColor=white" alt="Kubernetes" /></a>
   <a href="https://www.terraform.io/"><img src="https://img.shields.io/badge/IaC-Terraform-844FBA?style=plastic&logo=terraform&logoColor=white" alt="Terraform" /></a>
-  <a href="https://aws.amazon.com/ec2/"><img src="https://img.shields.io/badge/Cloud-AWS_EC2-FF9900?style=plastic&logo=amazonec2&logoColor=white" alt="AWS EC2" /></a>
-  <a href="https://aws.amazon.com/s3/"><img src="https://img.shields.io/badge/State-AWS_S3-569A31?style=plastic&logo=amazons3&logoColor=white" alt="AWS S3" /></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Production_Ready-00C853?style=plastic" alt="Status" />
+  <a href="https://www.sonarsource.com/products/sonarqube/"><img src="https://img.shields.io/badge/SAST-SonarQube-4E9BCD?style=plastic&logo=sonarsource&logoColor=white" alt="SonarQube" /></a>
+  <a href="https://trivy.dev/"><img src="https://img.shields.io/badge/Security-Trivy-1904DA?style=plastic&logo=aquasecurity&logoColor=white" alt="Trivy" /></a>
+  <a href="https://owasp.org/www-project-dependency-check/"><img src="https://img.shields.io/badge/SCA-OWASP_DC-000000?style=plastic&logo=owasp&logoColor=white" alt="OWASP" /></a>
   <img src="https://img.shields.io/badge/License-MIT-A31F34?style=plastic" alt="License" />
-  <img src="https://img.shields.io/badge/PRs-Welcome-FF69B4?style=plastic" alt="PRs Welcome" />
 </p>
 
 ---
 
 ## ✨ Highlights
 
-| Feature                       | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| 🐳 **Dockerized**             | Fully containerized with Gunicorn production server |
-| 🔄 **CI/CD Pipeline**         | 3-stage pipeline: Build → Provision → Deploy        |
-| 🏗️ **Infrastructure as Code** | Terraform provisions EC2, VPC, Security Groups      |
-| 📦 **Remote State**           | Terraform state stored in S3 for consistency        |
-| 🚀 **One-Click Deploy**       | Push to `main` → Auto deploys to AWS                |
-| � **One-Click Destroy**       | Manual workflow to tear down all infrastructure     |
-| 🔐 **Secure Secrets**         | All credentials via GitHub Secrets                  |
+| Feature               | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| 🐳 **Dockerized**     | Containerized with Gunicorn production server    |
+| 🔄 **Jenkins CI/CD**  | Multi-stage pipeline with shared libraries       |
+| 🚀 **ArgoCD GitOps**  | Automatic deployment when manifests change       |
+| ☸️ **AWS EKS**        | Kubernetes cluster with spot instances           |
+| 🏗️ **Terraform IaC**  | Infrastructure provisioned as code               |
+| 🔍 **Security Scans** | OWASP, SonarQube SAST, and Trivy container scans |
+| 🔁 **CI Skip Logic**  | Prevents infinite webhook loops gracefully       |
 
 ---
 
 ## 🏗️ Architecture
 
+```
+Developer pushes code to GitHub
+  │
+  ├──► GitHub Webhook triggers Jenkins
+  │
+  ├──► Jenkins Pipeline (Declarative + Shared Libraries)
+  │     ├── Clean Workspace
+  │     ├── Git Checkout + CI Skip Check
+  │     ├── OWASP Dependency-Check (SCA)
+  │     ├── SonarQube Analysis (SAST)
+  │     ├── Trivy Filesystem Scan
+  │     ├── Docker Build & Push → DockerHub
+  │     ├── Trivy Image Scan
+  │     └── Update K8s Manifests (sed + git push [ci skip])
+  │
+  └──► ArgoCD detects manifest change
+        ├── Pulls new image from DockerHub
+        └── Deploys to AWS EKS cluster
+```
+
+### DevSecOps & GitOps Architecture
+
 <p align="center">
-  <img src="assets/architecture-climax.png" alt="ClimaX Architecture" width="100%"/>
+  <img src="CICD-assests/devops and gitops arch.png" alt="DevSecOps & GitOps Architecture" width="100%"/>
 </p>
 
-### Flow
+---
 
-```
-Developer pushes code to GitHub (main branch)
-  │
-  ├─► Job 1: Build & Push Docker image to Docker Hub
-  │
-  ├─► Job 2: Terraform provisions AWS infrastructure
-  │     ├── Creates Default VPC & Security Group (ports 22, 80, 8000)
-  │     ├── Launches EC2 instance (t3.micro, Amazon Linux)
-  │     ├── Installs Docker via user_data script
-  │     ├── Stores state in S3 bucket
-  │     └── Outputs EC2 public IP
-  │
-  └─► Job 3: Deploys Docker container to EC2 via SSH
-        ├── Pulls image from Docker Hub
-        ├── Runs container on port 80
-        └── Passes API key as env variable
-```
+## 📸 CI/CD Pipeline Screenshots
+
+### Jenkins Pipeline
+
+<p align="center">
+  <img src="CICD-assests/jenkins-pipeline-final.png" alt="Jenkins Pipeline" width="100%"/>
+</p>
+
+### SonarQube Dashboard
+
+<p align="center">
+  <img src="CICD-assests/SonarQube.png" alt="SonarQube Dashboard" width="100%"/>
+</p>
+
+### ArgoCD Deployment
+
+<p align="center">
+  <img src="CICD-assests/Argocd.png" alt="ArgoCD Dashboard" width="100%"/>
+</p>
 
 ---
 
 ## 📁 Project Structure
 
 ```
-ClimaX/
-├── app.py                         # Flask application
-├── Dockerfile                     # Container config
-├── .dockerignore                  # Docker exclusions
-├── requirements.txt               # Python dependencies
+ClimaEngineX/
+├── app.py                          # Flask application
+├── Dockerfile                      # Container configuration
+├── requirements.txt                # Python dependencies
 ├── templates/
-│   └── index.html                 # Weather UI
+│   └── index.html                  # Weather UI
 ├── static/
-│   └── style.css                  # Styles
-├── terraform/
-│   ├── ec2.tf                     # EC2, VPC, Security Group
-│   ├── variable.tf                # Input variables
-│   ├── output.tf                  # EC2 IP output
-│   ├── provider.tf                # AWS provider (ap-south-1)
-│   └── terraform.tf               # Backend config (S3)
+│   └── style.css                   # Styles
+│
+├── Jenkinsfile                     # Declarative pipeline (uses shared libs)
+├── vars/                           # Jenkins Shared Library
+│   ├── cleanWorkspace.groovy       # Workspace cleanup
+│   ├── gitCheckout.groovy          # Git checkout
+│   ├── ciSkipCheck.groovy          # CI skip detection
+│   ├── owaspCheck.groovy           # OWASP Dependency-Check
+│   ├── sonarAnalysis.groovy        # SonarQube SAST scan
+│   ├── trivyScan.groovy            # Trivy security scan
+│   ├── dockerBuildPush.groovy      # Docker build & push
+│   └── updateK8sManifests.groovy   # K8s manifest update + git push
+│
+├── k8s/                            # Kubernetes manifests
+│   ├── deployment.yaml             # App deployment (2 replicas)
+│   └── service.yaml                # LoadBalancer service
+│
+├── terraform/                      # EC2 infrastructure (GitHub Actions)
+│   ├── ec2.tf                      # EC2, VPC, Security Group
+│   ├── variable.tf                 # Input variables
+│   ├── output.tf                   # EC2 IP output
+│   ├── provider.tf                 # AWS provider
+│   └── terraform.tf                # S3 backend config
+│
+├── terraform-eks/                  # EKS + CI server infrastructure
+│   ├── ec2.tf                      # Jenkins/SonarQube EC2 instance
+│   ├── variable.tf                 # Variables
+│   ├── output.tf                   # Outputs
+│   ├── provider.tf                 # AWS provider
+│   └── scripts/
+│       ├── setup.sh                # Combined setup (Jenkins + Docker + SonarQube + Trivy)
+│       ├── jenkins-setup.sh        # Jenkins standalone setup
+│       └── sonar-setup.sh          # SonarQube standalone setup
+│
+├── .github/workflows/              # GitHub Actions (alternative CI/CD)
+│   ├── deploy.yml                  # Build + Terraform + Deploy
+│   └── destroy.yml                 # Destroy infrastructure
+│
+├── CICD-assests/                   # Pipeline screenshots
+│   ├── jenkins-pipeline-final.png
+│   ├── Jenkins-pipeline-before.png
+│   ├── SonarQube.png
+│   └── Argocd.png
+│
 ├── assets/
-│   └── architecture-climax.png    # Architecture diagram
-├── .github/workflows/
-│   ├── deploy.yml                 # Build + Terraform + Deploy
-│   └── destroy.yml                # Destroy infrastructure
+│   └── architecture-climax.png     # Architecture diagram
+│
+├── .gitignore
+├── .dockerignore
+├── LICENSE
 └── README.md
 ```
+
+---
+
+## 🔧 Jenkins Shared Library
+
+The `vars/` directory contains reusable Groovy pipeline functions. Each file exports a `call()` method that the `Jenkinsfile` invokes directly.
+
+| File                        | Purpose                                                         |
+| --------------------------- | --------------------------------------------------------------- |
+| `cleanWorkspace.groovy`     | Cleans Jenkins workspace before each build                      |
+| `gitCheckout.groovy`        | Clones the repository from GitHub                               |
+| `ciSkipCheck.groovy`        | Detects `[ci skip]` in commit message to prevent infinite loops |
+| `owaspCheck.groovy`         | Runs OWASP Dependency-Check for known CVEs                      |
+| `sonarAnalysis.groovy`      | Runs SonarQube static code analysis                             |
+| `trivyScan.groovy`          | Runs Trivy scans (filesystem or Docker image)                   |
+| `dockerBuildPush.groovy`    | Builds Docker image and pushes to DockerHub                     |
+| `updateK8sManifests.groovy` | Updates `deployment.yaml` image tag and pushes to Git           |
+
+> **How it works:** When this repo is configured as a Jenkins Pipeline Library, Jenkins loads the `vars/` folder automatically. Each `.groovy` file becomes a callable function in the `Jenkinsfile`.
 
 ---
 
@@ -100,8 +181,8 @@ ClimaX/
 ### Run with Docker
 
 ```bash
-docker pull yourusername/knoxweather:latest
-docker run -d -p 80:5000 -e OPENWEATHER_API_KEY=your_key yourusername/knoxweather:latest
+docker pull rupeshs11/knoxweather:latest
+docker run -d -p 80:5000 -e OPENWEATHER_API_KEY=your_key rupeshs11/knoxweather:latest
 ```
 
 ### Run Locally
@@ -116,53 +197,77 @@ python app.py
 
 ---
 
-## � CI/CD Pipeline
+## ☸️ Kubernetes Deployment
 
-### `deploy.yml` — 3 Connected Jobs
+### Deploy to EKS
 
-| Job              | What it does                               |
-| ---------------- | ------------------------------------------ |
-| **Build & Push** | Builds Docker image → Pushes to Docker Hub |
-| **Terraform**    | Provisions EC2, SG, VPC → Outputs EC2 IP   |
-| **Deploy**       | SSHs into EC2 → Runs Docker container      |
+```bash
+# Create EKS cluster
+eksctl create cluster --name knoxweather-cluster --region us-east-1 \
+  --node-type t3.small --nodes 2 --managed --spot
 
-### `destroy.yml` — Manual Trigger
+# Apply manifests
+kubectl apply -f k8s/
 
-Tears down all Terraform-managed infrastructure. Run from **Actions** tab → `Destroy Infrastructure` → **Run workflow**.
+# Get the load balancer URL
+kubectl get svc knoxweather-svc
+```
 
-### Required GitHub Secrets
+### ArgoCD Setup
 
-| Secret                  | Description                  |
-| ----------------------- | ---------------------------- |
-| `AWS_ACCESS_KEY_ID`     | IAM access key for Terraform |
-| `AWS_SECRET_ACCESS_KEY` | IAM secret key for Terraform |
-| `EC2_SSH_KEY`           | Private key (`.pem`) for SSH |
-| `DOCKERHUB_USERNAME`    | Docker Hub username          |
-| `DOCKERHUB_TOKEN`       | Docker Hub access token      |
-| `OPENWEATHER_API_KEY`   | OpenWeatherMap API key       |
+```bash
+# Install ArgoCD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Expose ArgoCD UI
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+# Get admin password
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
 
 ---
 
-## 🏗️ Terraform (IaC)
+## 🏗️ Terraform
 
-### Resources Created
+This project includes two Terraform configurations:
 
-| Resource           | Details                                      |
-| ------------------ | -------------------------------------------- |
-| **Default VPC**    | Uses existing default VPC                    |
-| **Security Group** | Ports 22 (SSH), 80 (HTTP), 8000              |
-| **EC2 Instance**   | t3.micro, Amazon Linux, Docker pre-installed |
-| **S3 Backend**     | Stores `terraform.tfstate` remotely          |
+| Directory        | Purpose                                | Resources                                           |
+| ---------------- | -------------------------------------- | --------------------------------------------------- |
+| `terraform/`     | EC2 deployment via GitHub Actions      | EC2, VPC, Security Group, S3 backend                |
+| `terraform-eks/` | EKS CI/CD server (Jenkins + SonarQube) | EC2 (m7i-flex.large), Security Group, setup scripts |
 
 ### Key Commands
 
 ```bash
-cd terraform
-terraform init          # Initialize + connect to S3 backend
-terraform plan          # Preview changes
-terraform apply         # Create infrastructure
-terraform destroy       # Tear down everything
+cd terraform-eks    # or cd terraform
+terraform init
+terraform plan
+terraform apply
+terraform destroy   # Always destroy to avoid charges!
 ```
+
+---
+
+## 🛠️ Jenkins Setup
+
+### Required Jenkins Plugins
+
+| Plugin                 | Purpose                    |
+| ---------------------- | -------------------------- |
+| OWASP Dependency-Check | SCA vulnerability scanning |
+| SonarQube Scanner      | Static code analysis       |
+| Docker Pipeline        | Docker build support       |
+| Pipeline Utility Steps | Pipeline utilities         |
+
+### Required Jenkins Credentials
+
+| Credential ID     | Type              | Description                             |
+| ----------------- | ----------------- | --------------------------------------- |
+| `dockerhub-creds` | Username/Password | DockerHub login                         |
+| `sonar-token`     | Secret text       | SonarQube authentication token          |
+| `github-creds`    | Username/Password | GitHub PAT for pushing manifest changes |
 
 ---
 
@@ -179,52 +284,45 @@ terraform destroy       # Tear down everything
 
 ---
 
-## 🛠️ API Endpoints
-
-| Endpoint    | Method | Description             |
-| ----------- | ------ | ----------------------- |
-| `/`         | GET    | Weather UI              |
-| `/weather`  | POST   | Get weather data (JSON) |
-| `/health`   | GET    | Health check            |
-| `/test-api` | GET    | Test API config         |
-
----
-
 ## 🤝 Tech Stack
 
-| Technology         | Purpose                 |
-| ------------------ | ----------------------- |
-| **Flask**          | Web framework           |
-| **Gunicorn**       | WSGI server             |
-| **Docker**         | Containerization        |
-| **Terraform**      | Infrastructure as Code  |
-| **GitHub Actions** | CI/CD automation        |
-| **Docker Hub**     | Container registry      |
-| **AWS EC2**        | Cloud compute           |
-| **AWS S3**         | Terraform state storage |
-| **OpenWeatherMap** | Weather API             |
+| Technology         | Purpose                                      |
+| ------------------ | -------------------------------------------- |
+| **Flask**          | Web framework                                |
+| **Gunicorn**       | Production WSGI server                       |
+| **Docker**         | Containerization                             |
+| **Jenkins**        | CI/CD pipeline orchestration                 |
+| **ArgoCD**         | GitOps continuous delivery                   |
+| **AWS EKS**        | Managed Kubernetes                           |
+| **Terraform**      | Infrastructure as Code                       |
+| **SonarQube**      | Static code analysis (SAST)                  |
+| **Trivy**          | Container & filesystem vulnerability scanner |
+| **OWASP DC**       | Software composition analysis (SCA)          |
+| **Docker Hub**     | Container registry                           |
+| **OpenWeatherMap** | Weather data API                             |
 
 ---
 
 ## 🧹 Cleanup
 
-### Option 1: Automated (Recommended)
+### Delete EKS Cluster
 
-Go to **Actions** → `Destroy Infrastructure` → **Run workflow**
+```bash
+kubectl delete namespace argocd
+eksctl delete cluster --name knoxweather-cluster --region us-east-1
+```
 
-### Option 2: Manual
+### Destroy Terraform Resources
 
-Delete from AWS Console:
-
-- EC2 Instance
-- Security Group
-- S3 Bucket (if no longer needed)
+```bash
+cd terraform-eks && terraform destroy -auto-approve
+cd terraform && terraform destroy -auto-approve
+```
 
 > ⚠️ **Always terminate unused AWS resources to avoid charges!**
 
 ---
 
-
 <p align="center">
-  <i>Push to main. Terraform provisions. Docker deploys. It's that simple.</i>
+  <i>Push to main → Jenkins scans, builds, pushes → ArgoCD deploys to EKS. That's GitOps.</i>
 </p>

@@ -1,4 +1,38 @@
+# Version control
 .git
+.gitignore
+
+# Python cache
 __pycache__
 *.pyc
-.dist
+*.pyo
+
+# CI/CD & Infrastructure (not needed in Docker image)
+terraform/
+terraform-eks/
+k8s/
+CICD-assests/
+assets/
+.github/
+Jenkinsfile
+vars/
+
+# Docs
+*.md
+LICENSE
+
+# Environment & secrets
+.env
+*.pem
+*.pub
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+.dist/
+.scannerwork/
+dependency-check-report.*

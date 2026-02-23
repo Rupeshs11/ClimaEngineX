@@ -1,15 +1,40 @@
+# Environment
 .env
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 nohup.out
 runner.py
+.venv/
+venv/
 
 # SSH Keys
 *.pem
 *.pem.pub
+*.pub
 
 # Terraform
 .terraform/
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+*.tfvars
+
+# Jenkins / CI artifacts
+dependency-check-report.*
+.scannerwork/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.dist/
+*.resolved
