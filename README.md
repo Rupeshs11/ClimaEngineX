@@ -1,4 +1,4 @@
-# 🌦️ ClimaEngineX — Weather App with GitOps CI/CD on AWS EKS
+# 🌦️ ClimaX — Weather App with GitOps CI/CD on AWS EKS
 
 > Real-time weather app with a production-grade Jenkins CI/CD pipeline deploying to Kubernetes via ArgoCD GitOps.
 
