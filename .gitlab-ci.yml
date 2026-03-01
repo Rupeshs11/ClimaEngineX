@@ -1,0 +1,35 @@
+stages:
+  - build
+  - test
+  - push_to_dockerhub
+  - deploy
+
+build_job:
+  stage: build
+  scripts:
+    - docker build -t knoxweather:latest .
+  tags:
+    - dev
+
+test_job:
+  stage: test 
+  scripts:
+    - echo "testing ..."
+  tags:
+    - dev
+
+push_job:
+  stage: push_to_dockerhub
+  scripts:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+    - docker image tag knoxweather:latest $DOCKERHUB_USER/knoxweather:latest
+    - docker push $DOCKERHUB_USER/knoxweather:latest 
+  tags:
+    - dev
+
+deploy_job:
+  stage: deploy
+  scripts:
+    - docker-compose up -d
+  tags:
+    - dev 
