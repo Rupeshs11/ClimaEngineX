@@ -6,30 +6,41 @@ stages:
 
 build_job:
   stage: build
-  scripts:
+  script:
     - docker build -t knoxweather:latest .
   tags:
     - dev
 
 test_job:
-  stage: test 
-  scripts:
-    - echo "testing ..."
+  stage: test
+  script:
+    - echo "Running health check test..."
+    - docker run --rm -d --name knoxweather-test -p 5001:5000 knoxweather:latest
+    - sleep 5
+    - curl -f http://localhost:5001/health || exit 1
+    - docker stop knoxweather-test
   tags:
     - dev
 
 push_job:
   stage: push_to_dockerhub
-  scripts:
+  script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
     - docker image tag knoxweather:latest $DOCKERHUB_USER/knoxweather:latest
-    - docker push $DOCKERHUB_USER/knoxweather:latest 
+    - docker push $DOCKERHUB_USER/knoxweather:latest
   tags:
     - dev
 
 deploy_job:
   stage: deploy
-  scripts:
-    - docker-compose up -d
+  script:
+    - docker pull $DOCKERHUB_USER/knoxweather:latest
+    - docker stop knoxweather || true
+    - docker rm knoxweather || true
+    - docker run -d --name knoxweather
+      -p 80:5000
+      -e OPENWEATHER_API_KEY=$OPENWEATHER_API_KEY
+      --restart unless-stopped
+      $DOCKERHUB_USER/knoxweather:latest
   tags:
-    - dev 
+    - dev
